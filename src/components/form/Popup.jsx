@@ -3,12 +3,19 @@ import { Box } from '@mui/material'
 import Form from './Form'
 import { Popover , Button,IconButton } from '@mui/material'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import SignUpPrompt from '../signUpPrompt/SignUpPrompt';
+import { auth } from '../../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useState } from 'react';
+const Popup = ({ user,trigger,children,sucess}) => {
 
-
-const Popup = ({trigger,children}) => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [signup,setSignup]=useState(false)
+    
   const handleClick = (event) => {
+    if (user==null) {
+      setSignup(true)
+    }
     setAnchorEl(event.currentTarget);
   };
 
@@ -18,7 +25,6 @@ const Popup = ({trigger,children}) => {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
-  console.log(anchorEl)
   return (
     <>
   <IconButton  size="large" sx={{ position: "fixed",
@@ -27,7 +33,6 @@ const Popup = ({trigger,children}) => {
   <AddCircleIcon style={{ color:"#e91e63" , fontSize: 100 }}/>
 </IconButton>
 <Popover
-sx={{}}
 anchorReference="anchorPosition"
 anchorPosition={{ top: 350, left: 698 }}
 anchorOrigin={{
@@ -44,7 +49,13 @@ transformOrigin={{
   onClose={handleClose}
   
 >
-  <Form modal={setAnchorEl} />
+  { user ?(
+    <Form user={user} sucess={sucess} modal={setAnchorEl} />
+  ):(
+    <SignUpPrompt modal={setAnchorEl}/>
+  ) 
+  }
+  
 </Popover>
 </>
   )}

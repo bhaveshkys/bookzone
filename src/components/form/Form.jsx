@@ -1,22 +1,25 @@
 import {
-  Typography,
-  AppBar,
-  Toolbar,
-  TextField,
-  Button,
-  IconButton,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
+  Typography,AppBar,Toolbar,TextField,Button,IconButton,
+  Box,FormGroup,FormControlLabel,Checkbox,Alert
 } from '@mui/material';
-import { db } from '../../firebase';
+import bookSchema from './bookValidation';
+import { db,storage } from '../../firebase';
 import { addDoc ,collection } from 'firebase/firestore';
+import { ref, uploadBytes } from 'firebase/storage';
 import { useState } from 'react';
 import CancelIcon from '@mui/icons-material/Cancel';
 import * as React from "react";
 import MenuItem from "@mui/material/MenuItem";
-function Form({modal}) {
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import { BookAPIKey } from '../../firebase';
+const axios = require('axios').default;
+const short  = require('short-uuid')
+
+function Form({  user,sucess, modal}) {
+  
+    const[back,setBack]=useState(false)
+    const[valid,setValid]=useState(true)
     const[title,setTitle]=useState("")
     const[author,setAuthor]=useState("")
     const[coverType,setCoverType]=useState("")
@@ -25,27 +28,99 @@ function Form({modal}) {
     const[edition,setEdition]=useState("")
     const[defects,setDefects]=useState("")
     const[additionalDetails,setAdditionalDetails]=useState("")
+    const[imageUpload,setImageUpload]=useState(null)
     const bookRef =collection(db,"books");
-    const listBook = async()=>{
-        await addDoc(bookRef,{
-            title:title,
-            author:author,
-            cover_type:coverType,
-            defects:defects,
-            genre:genre,
-            publication:publication,
-            totalparts_edition:edition,
-            additional_details:additionalDetails,
-            user:"00"
-        })
+    const uploadImage=(uuid)=>{
+      if(imageUpload == null)return
+      const imageRef = ref(storage, `bookImage/${uuid}`)
+      const metadata = {
+        contentType: 'image/jpg', 
+      };
+      uploadBytes(imageRef,imageUpload).then(()=>{
+        console.log("image uploaded")
+      })
     }
+    let temp=""
+    const getSummary=async()=>{
+      const result = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${title}&author=${author}&key=${BookAPIKey}&maxResults=1`)
+      temp=result.data.items[0]?.searchInfo.textSnippet
+      
+
+      /*  axios.get(`https://www.googleapis.com/books/v1/volumes?q=${title}&author=${author}&key=${BookAPIKey}&maxResults=1`)
+      .then(data=>{
+        setSummary(data.data.items[0]?.searchInfo.textSnippet) 
+        console.log("getsummary wins the race")
+
+      })*/
+    }
+    const clearForm =()=>{
+      setTitle("")
+      setAuthor("")
+      setCoverType("")
+      setGenre("")
+      setPublication("")
+      setEdition("")
+      setDefects("")
+      setAdditionalDetails("")
+      setImageUpload(null)
+      temp=""
+    }
+    const listBook = async()=>{
+     await getSummary() 
+      const uuid=short.generate()
+      const bookform ={
+        title:title,
+        author:author,
+        cover_type:coverType,
+        defects:defects,
+        genre:genre,
+        publication:publication,
+        totalparts_edition:edition,
+        additional_details:additionalDetails,
+        user:user.uid,
+        uuid:uuid,
+        summary:temp
+    }
+      const isv = await bookSchema.isValid(bookform)
+      setValid(isv)
+      if ( isv) {
+        setBack(true)
+        addDoc(bookRef,bookform)
+        uploadImage(uuid)  
+        clearForm()
+        setTimeout(function(){
+          modal(null)
+          
+        },1500)
+        setTimeout(function(){
+          sucess(true)
+          
+        },3000)
+        
+        
+
+      }
+    }
+    React.useEffect(()=>{
+      if (back) 
+      setInterval(function(){setBack(false)},2000)
+    },[back])
   return (
+    !back ?(
     <div >
+      
       <Typography sx={{ display: 'flex' }}  variant="h5">List your preloved book <IconButton onClick={() => modal(null)} sx={{ flexDirection: 'row-reverse' , marginLeft:"auto" }}  variant="contained" color="error">
           <CancelIcon/>
         </IconButton></Typography>
-      
+        {
+        !valid ? (
+          <Alert severity="error">empty input fields</Alert>
+        ) :(
+          <></>
+        )
+      }
       <Box >
+      
         <TextField
         onChange={(e)=>{setTitle(e.target.value)}}
         style={{ width: "250px", margin: "5px" }}
@@ -79,7 +154,7 @@ function Form({modal}) {
           variant="outlined"
         />
         <br />
-        <TextField
+        <TextField required
             onChange={(e)=>{setPublication(e.target.value)}}
 
           style={{ width: "250px", margin: "5px" }}
@@ -112,6 +187,14 @@ function Form({modal}) {
           label="Additional  Details"
           variant="outlined"
         />
+        <TextField
+            onChange={(e)=>{setImageUpload(e.target.files[0])}}
+
+          style={{ width: "250px", margin: "5px" }}
+          type="file"
+          variant="outlined"
+          inputProps={{accept:'image/*'}}
+        />
         
         
        {/*  <FormControlLabel
@@ -134,6 +217,14 @@ function Form({modal}) {
         </Button>
       </Box>
     </div>
+    ) :(
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={back}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    )
   );
 }
 export  default Form

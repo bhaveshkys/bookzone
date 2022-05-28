@@ -1,20 +1,24 @@
 import './App.css';
+import React, { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase';
+import { auth,storage } from './firebase';
+import {  ref ,getDownloadURL } from "firebase/storage";
 import Navbar from './components/navbar/Navbar';
 import Feed from './pages/Feed';
 import { useState } from 'react';
 function App() {
   const [user,setUser]=useState({})
-  onAuthStateChanged(auth,(currentUser)=>{
-    setUser(currentUser)
+  
+  useEffect(()=>{
+    onAuthStateChanged(auth,(currentUser)=>{
+      setUser(currentUser)
+    })
   })
-  console.log(user)
   return (
     <div className="App">
-      <Navbar/>
+      <Navbar user={user} />
       <header className="App-header">
-        <Feed/>
+        <Feed user={user}/>
       </header>
     </div>
   );

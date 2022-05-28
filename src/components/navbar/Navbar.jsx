@@ -13,10 +13,12 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import {authProvider , auth} from "../../firebase"
 import {  signInWithPopup, GoogleAuthProvider ,signOut } from "firebase/auth";
+import { checkNewUser } from '../../firebase_func';
+import { signin } from '../../firebase_func';
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile',  'Dashboard'];
 
-const Navbar = () => {
+const Navbar = ({user}) => {
   const [anchorElNav, setAnchorElNav] = useState()
   const [anchorElUser, setAnchorElUser] = useState()
 
@@ -34,28 +36,7 @@ const Navbar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  const signin =()=>{
-    signInWithPopup(auth, authProvider)
-  .then((result) => {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    // The signed-in user info.
-    const user = result.user;
-    console.log("this worksig",user)
-    // ...
-  }).catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    console.log(errorCode,errorMessage,credential)
-    // ...
-  });
-  }
+  
   const logout =()=>{
     signOut(auth).then(() => {
       console.log("logout  sucess")
@@ -137,7 +118,12 @@ const Navbar = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                {!user ?(
+                  <Avatar alt="femy Sharp" src={require('./download.png')} />
+                ):(
+                  <Avatar alt="femy Sharp" src={user.photoURL} />
+                )}
+                
               </IconButton>
             </Tooltip>
             <Menu
