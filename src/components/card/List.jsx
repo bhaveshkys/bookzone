@@ -11,7 +11,7 @@ import { storage } from '../../firebase';
 import { ref , getDownloadURL } from 'firebase/storage';
 import ProductPopUp from '../productDetail/ProductPopUp';
 import { CardActionArea } from '@mui/material';
-const List = ({content}) => {
+const List = ({user,content}) => {
   const[image,setImage]=useState("")
   const[popUp,setPopUp]=useState(false)
   const cardClickHandle=()=>{
@@ -28,7 +28,7 @@ const List = ({content}) => {
   
   return (
     <>
-    <ProductPopUp image={image} content={content} setPopUp={setPopUp} popUp={popUp} />
+    <ProductPopUp user={user} image={image} content={content} setPopUp={setPopUp} popUp={popUp} />
       <Card sx={{  minWidth: 187.5,maxWidth: 187.5,  height:450, margin: "10px" }}>
         <CardActionArea onClick={cardClickHandle}>
       <CardMedia
@@ -52,7 +52,7 @@ const List = ({content}) => {
       </CardContent>
       <CardActions >
       <Typography marginRight={"auto"}  variant='button' color="blue">
-          $399
+      ₹{content.price}
         </Typography>
       <Typography   variant='button' color="green">
           {content.genre}

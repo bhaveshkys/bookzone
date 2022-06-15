@@ -8,6 +8,7 @@ const bookSchema = yup.object().shape({
     publication:yup.string().required(),
     totalparts_edition:yup.string().required(),
     additional_details:yup.string().required(),
+    price:yup.string().required(),
 
 })
 export default bookSchema

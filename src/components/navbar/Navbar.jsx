@@ -15,13 +15,20 @@ import {authProvider , auth} from "../../firebase"
 import {  signInWithPopup, GoogleAuthProvider ,signOut } from "firebase/auth";
 import { checkNewUser } from '../../firebase_func';
 import { signin } from '../../firebase_func';
+import InboxPopUp from './InboxPopUp';
+import { Link } from 'react-router-dom';
 const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile',  'Dashboard'];
+const settings = [  'Dashboard'];
+
 
 const Navbar = ({user}) => {
+  console.log(user.photoURL)
   const [anchorElNav, setAnchorElNav] = useState()
   const [anchorElUser, setAnchorElUser] = useState()
-
+  const[popUpInbox,setPopUpInbox]=useState(false)
+  const handleClick=()=>{
+    setPopUpInbox(true)
+  }
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -47,16 +54,21 @@ const Navbar = ({user}) => {
   }
 
   return (
+    <>
+    <InboxPopUp user={user} popUpInbox={popUpInbox} setPopUpInbox={setPopUpInbox} />
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
-            variant="h6"
+            variant="h4"
             noWrap
             component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
           >
-            LOGO
+            <Link to={"/"} style={{textDecoration:"none",color:"inherit"}} >
+           <span style={{"paddingTop":8,"marginRight":10}}>BOOKZONE</span> 
+            <img style={{"height":60}} src={require('./PicsArt_05-29-07.14.49.png')} alt="logo" />
+            </Link>
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -88,11 +100,14 @@ const Navbar = ({user}) => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
+              {/* {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
-              ))}
+              ))} */}
+              <MenuItem /* sx={{"justifyContent":"flex-end"}} */ key={"Inbox"} onClick={handleClick}>
+                  <Typography textAlign="center">Inbox</Typography>
+                </MenuItem>
             </Menu>
           </Box>
           <Typography
@@ -101,10 +116,13 @@ const Navbar = ({user}) => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
           >
-            LOGO
+            <Link to={"/"}>
+            <img style={{"height":70}} src={require('./PicsArt_05-29-07.14.49.png')} alt="logo" />
+            </Link>
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+          
+          <Box sx={{ "justifyContent":"flex-end", flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {/* {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
@@ -112,7 +130,10 @@ const Navbar = ({user}) => {
               >
                 {page}
               </Button>
-            ))}
+            ))} */}
+            <Button  key={"Inbox"} onClick={handleClick} sx={{"marginRight":10 , my: 2, color: 'white', display: 'block' }}>
+                  Inbox
+            </Button>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -142,22 +163,28 @@ const Navbar = ({user}) => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-               <MenuItem key={"SignIn"} onClick={signin}>
-                  <Typography textAlign="center">SignIn</Typography>
-                </MenuItem>
-               <MenuItem key={"Logout"} onClick={logout}>
+              
+                { user ? (
+                  <>
+                <Link to={"profile"} style={{textDecoration:"none",color:"inherit"}} >
+                <MenuItem key={'Profile'} >
+                   <Typography textAlign="center">Profile</Typography>
+                 </MenuItem>
+                 </Link>
+                <MenuItem key={"Logout"} onClick={logout}>
                   <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
+                </>):(<MenuItem key={"SignIn"} onClick={signin}>
+                  <Typography textAlign="center">SignIn</Typography>
+                </MenuItem>)}
+               
+               
             </Menu>
           </Box>
         </Toolbar>
       </Container>
     </AppBar>
+    </>
   );
 };
 export default Navbar;

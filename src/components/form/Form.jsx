@@ -1,6 +1,6 @@
 import {
   Typography,AppBar,Toolbar,TextField,Button,IconButton,
-  Box,FormGroup,FormControlLabel,Checkbox,Alert
+  Box,FormGroup,FormControlLabel,Checkbox,Alert, InputLabel, Select
 } from '@mui/material';
 import bookSchema from './bookValidation';
 import { db,storage } from '../../firebase';
@@ -23,11 +23,12 @@ function Form({  user,sucess, modal}) {
     const[title,setTitle]=useState("")
     const[author,setAuthor]=useState("")
     const[coverType,setCoverType]=useState("")
-    const[genre,setGenre]=useState("")
+    const[genre,setGenre]=useState("romance")
     const[publication,setPublication]=useState("")
     const[edition,setEdition]=useState("")
     const[defects,setDefects]=useState("")
     const[additionalDetails,setAdditionalDetails]=useState("")
+    const[price,setPrice]=useState("")
     const[imageUpload,setImageUpload]=useState(null)
     const bookRef =collection(db,"books");
     const uploadImage=(uuid)=>{
@@ -57,7 +58,7 @@ function Form({  user,sucess, modal}) {
       setTitle("")
       setAuthor("")
       setCoverType("")
-      setGenre("")
+      setGenre("romance")
       setPublication("")
       setEdition("")
       setDefects("")
@@ -79,7 +80,8 @@ function Form({  user,sucess, modal}) {
         additional_details:additionalDetails,
         user:user.uid,
         uuid:uuid,
-        summary:temp
+        summary:temp,
+        price:price
     }
       const isv = await bookSchema.isValid(bookform)
       setValid(isv)
@@ -98,7 +100,7 @@ function Form({  user,sucess, modal}) {
         },3000)
         
         
-
+        
       }
     }
     React.useEffect(()=>{
@@ -119,7 +121,7 @@ function Form({  user,sucess, modal}) {
           <></>
         )
       }
-      <Box >
+      <Box sx={{"display":"flex","flexWrap":"wrap"}} >
       
         <TextField
         onChange={(e)=>{setTitle(e.target.value)}}
@@ -145,14 +147,25 @@ function Form({  user,sucess, modal}) {
           label="Cover Type"
           variant="outlined"
         />
-        <TextField
+        <InputLabel id='genre' ></InputLabel>
+        <Select labelId='genre' value="romance" label="genre" onChange={(e)=>{setGenre(e.target.value)}} >
+          <MenuItem value={"romance"} >romance</MenuItem>
+          <MenuItem value={"mystery"} >mystery</MenuItem>
+          <MenuItem value={"fantasy"} >fantasy</MenuItem>
+          <MenuItem value={"horror"} >horror</MenuItem>
+          <MenuItem value={"fiction"} >fiction</MenuItem>
+          <MenuItem value={"biography"} >biography</MenuItem>
+          <MenuItem value={"sciFi"} >sci-Fi</MenuItem>
+          <MenuItem value={"selfHelp"} >self help</MenuItem>
+        </Select>
+        {/* <TextField
             onChange={(e)=>{setGenre(e.target.value)}}
 
           style={{ width: "250px", margin: "5px", height: "50px" }}
           type="text"
           label="genre"
           variant="outlined"
-        />
+        /> */}
         <br />
         <TextField required
             onChange={(e)=>{setPublication(e.target.value)}}
@@ -185,6 +198,14 @@ function Form({  user,sucess, modal}) {
           style={{ width: "250px", margin: "5px" }}
           type="text"
           label="Additional  Details"
+          variant="outlined"
+        />
+        <TextField
+            onChange={(e)=>{setPrice(e.target.value)}}
+
+          style={{ width: "250px", margin: "5px" }}
+          type="text"
+          label="Price"
           variant="outlined"
         />
         <TextField

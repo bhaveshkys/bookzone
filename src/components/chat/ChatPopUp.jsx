@@ -2,27 +2,32 @@ import React from 'react'
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import ProductDetail from './ProductDetail';
-const ProductPopUp = ({ user, image, content, popUp,setPopUp}) => {
+import { Temp } from './Temp';
+import SignUpPrompt from '../signUpPrompt/SignUpPrompt';
+const ChatPopUp = ({ bookName ,bookId ,seller, user, popUpChat, setPopUpChat }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
+
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
-    setPopUp(false)
+    setPopUpChat(false)
   };
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+ 
   return (
     <div>
     <Popover
-    sx={{"maxWidth":1000}}
+  
     anchorReference="anchorPosition"
-    anchorPosition={{ top: 120, left: 608 }}
+    anchorPosition={{ top: 350,left:10 }}
       id={id}
-      open={popUp}
+      open={popUpChat}
       anchorEl={anchorEl}
       onClose={handleClose}
       anchorOrigin={{
@@ -30,10 +35,15 @@ const ProductPopUp = ({ user, image, content, popUp,setPopUp}) => {
         horizontal: 'left',
       }}
     >
-    <ProductDetail  user={user}  image={image} content={content} /> 
+      {user?(
+        <Temp bookName={bookName} bookId={bookId} seller={seller}  user={user} />
+      ):(
+        <SignUpPrompt modal={setAnchorEl}/>
+      )}
+      
     </Popover>
   </div>
   )
 }
 
-export default ProductPopUp
+export default ChatPopUp
