@@ -11,14 +11,24 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-
+import {authProvider , auth} from "../../firebase"
+import {  signInWithPopup, GoogleAuthProvider ,signOut } from "firebase/auth";
+import { checkNewUser } from '../../firebase_func';
+import { signin } from '../../firebase_func';
+import InboxPopUp from './InboxPopUp';
+import { Link } from 'react-router-dom';
 const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = [  'Dashboard'];
 
-const Navbar = () => {
+
+const Navbar = ({user}) => {
+  console.log(user.photoURL)
   const [anchorElNav, setAnchorElNav] = useState()
   const [anchorElUser, setAnchorElUser] = useState()
-
+  const[popUpInbox,setPopUpInbox]=useState(false)
+  const handleClick=()=>{
+    setPopUpInbox(true)
+  }
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -33,18 +43,32 @@ const Navbar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  
+  const logout =()=>{
+    signOut(auth).then(() => {
+      console.log("logout  sucess")
+      // Sign-out successful.
+    }).catch((error) => {
+      console.log("error in logout",error)
+    });
+  }
 
   return (
+    <>
+    <InboxPopUp user={user} popUpInbox={popUpInbox} setPopUpInbox={setPopUpInbox} />
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
-            variant="h6"
+            variant="h4"
             noWrap
             component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
           >
-            LOGO
+            <Link to={"/"} style={{textDecoration:"none",color:"inherit"}} >
+           <span style={{"paddingTop":8,"marginRight":10}}>BOOKZONE</span> 
+            <img style={{"height":60}} src={require('./PicsArt_05-29-07.14.49.png')} alt="logo" />
+            </Link>
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -76,11 +100,14 @@ const Navbar = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
+              {/* {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
-              ))}
+              ))} */}
+              <MenuItem /* sx={{"justifyContent":"flex-end"}} */ key={"Inbox"} onClick={handleClick}>
+                  <Typography textAlign="center">Inbox</Typography>
+                </MenuItem>
             </Menu>
           </Box>
           <Typography
@@ -89,10 +116,13 @@ const Navbar = () => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
           >
-            LOGO
+            <Link to={"/"}>
+            <img style={{"height":70}} src={require('./PicsArt_05-29-07.14.49.png')} alt="logo" />
+            </Link>
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+          
+          <Box sx={{ "justifyContent":"flex-end", flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {/* {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
@@ -100,13 +130,21 @@ const Navbar = () => {
               >
                 {page}
               </Button>
-            ))}
+            ))} */}
+            <Button  key={"Inbox"} onClick={handleClick} sx={{"marginRight":10 , my: 2, color: 'white', display: 'block' }}>
+                  Inbox
+            </Button>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                {!user ?(
+                  <Avatar alt="femy Sharp" src={require('./download.png')} />
+                ):(
+                  <Avatar alt="femy Sharp" src={user.photoURL} />
+                )}
+                
               </IconButton>
             </Tooltip>
             <Menu
@@ -125,16 +163,28 @@ const Navbar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+              
+                { user ? (
+                  <>
+                <Link to={"profile"} style={{textDecoration:"none",color:"inherit"}} >
+                <MenuItem key={'Profile'} >
+                   <Typography textAlign="center">Profile</Typography>
+                 </MenuItem>
+                 </Link>
+                <MenuItem key={"Logout"} onClick={logout}>
+                  <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
-              ))}
+                </>):(<MenuItem key={"SignIn"} onClick={signin}>
+                  <Typography textAlign="center">SignIn</Typography>
+                </MenuItem>)}
+               
+               
             </Menu>
           </Box>
         </Toolbar>
       </Container>
     </AppBar>
+    </>
   );
 };
 export default Navbar;
