@@ -1,6 +1,6 @@
 import {
-  Typography,AppBar,Toolbar,TextField,Button,IconButton,
-  Box,FormGroup,FormControlLabel,Checkbox,Alert, InputLabel, Select
+  Typography,TextField,Button,IconButton,
+  Box,Alert, InputLabel, Select
 } from '@mui/material';
 import bookSchema from './bookValidation';
 import { db,storage } from '../../firebase';
@@ -34,9 +34,6 @@ function Form({  user,sucess, modal}) {
     const uploadImage=(uuid)=>{
       if(imageUpload == null)return
       const imageRef = ref(storage, `bookImage/${uuid}`)
-      const metadata = {
-        contentType: 'image/jpg', 
-      };
       uploadBytes(imageRef,imageUpload).then(()=>{
         console.log("image uploaded")
       })

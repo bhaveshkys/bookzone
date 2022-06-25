@@ -1,11 +1,8 @@
 import React from 'react'
-import { Box } from '@mui/material'
 import Form from './Form'
-import { Popover , Button,IconButton } from '@mui/material'
+import { Popover ,IconButton } from '@mui/material'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SignUpPrompt from '../signUpPrompt/SignUpPrompt';
-import { auth } from '../../firebase';
-import { onAuthStateChanged } from 'firebase/auth';
 import { useState } from 'react';
 const Popup = ({ user,trigger,children,sucess}) => {
 

@@ -1,5 +1,5 @@
-import { Button, ButtonGroup, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Radio, RadioGroup, Slider } from '@mui/material'
-import React, { useState } from 'react'
+import { Button, ButtonGroup,  FormControl, FormControlLabel,  FormLabel, Radio, RadioGroup, Slider } from '@mui/material'
+import React from 'react'
 
 const Filter = ({setGenreFilter,priceFilter,handleReset,splitPrice,showFilterValue,handleFilterClick ,setSort,handleSortClick}) => {
     /* const[genreFilter,setGenreFilter]=useState()

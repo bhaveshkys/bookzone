@@ -11,18 +11,14 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {authProvider , auth} from "../../firebase"
-import {  signInWithPopup, GoogleAuthProvider ,signOut } from "firebase/auth";
-import { checkNewUser } from '../../firebase_func';
+import { auth} from "../../firebase"
+import { signOut } from "firebase/auth";
 import { signin } from '../../firebase_func';
 import InboxPopUp from './InboxPopUp';
 import { Link } from 'react-router-dom';
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = [  'Dashboard'];
 
 
 const Navbar = ({user}) => {
-  console.log(user.photoURL)
   const [anchorElNav, setAnchorElNav] = useState()
   const [anchorElUser, setAnchorElUser] = useState()
   const[popUpInbox,setPopUpInbox]=useState(false)

@@ -1,19 +1,11 @@
 import React from 'react'
 import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import { Inbox } from './Inbox';
 import SignUpPrompt from '../signUpPrompt/SignUpPrompt';
 
 const InboxPopUp = ({ user ,popUpInbox, setPopUpInbox }) => {
 /* const ChatPopUp = ({ bookId ,seller, user, popUpChat, setPopUpChat }) => { */
     const [anchorEl, setAnchorEl] = React.useState(null);
-
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
   const handleClose = () => {
     setAnchorEl(null);
     setPopUpInbox(false)

@@ -2,8 +2,7 @@ import './App.css';
 import React, { useEffect } from 'react';
 import {BrowserRouter,Routes,Route} from "react-router-dom"
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth,storage } from './firebase';
-import {  ref ,getDownloadURL } from "firebase/storage";
+import { auth } from './firebase';
 import Navbar from './components/navbar/Navbar';
 import Feed from './pages/feed/Feed';
 import { useState } from 'react';

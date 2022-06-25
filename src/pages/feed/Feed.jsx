@@ -1,7 +1,5 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import {db} from "../../firebase"
-import { collection , getDocs,onSnapshot } from 'firebase/firestore'
 import List from '../../components/card/List'
 import "./feed.css"
 import { Box } from '@mui/material'
@@ -11,8 +9,6 @@ import MuiAlert from '@mui/material/Alert';
 import Filter from '../../components/filter/Filter'
 import { returnFilteredBooks , notReturnUserBooks } from '../../firebase_func'
 const Feed = ({user}) =>  {
-  const vertical="bottom"
-  const horizontal="left"
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
@@ -23,7 +19,6 @@ const Feed = ({user}) =>  {
     const[priceFilter,setPriceFilter]=useState([0,1000])
     const[lessThanPrice,setLessThanPrice]=useState(1000)
     const[moreThanPrice,setMoreThanPrice]=useState(0)
-    const usersRef =collection(db,"books");
     const handleClose = (event, reason) => {
       if (reason === 'clickaway') {
         return;
@@ -39,9 +34,7 @@ const Feed = ({user}) =>  {
             /* console.log(data.docs.map((book)=>({...book.data(), id: book.id}))) */
           
             const data=await notReturnUserBooks(user)
-            let arr=[]
             setBook(data.docs.map((book)=>({...book.data(), id: book.id})))
-            console.log(book)
             console.log("useeffect running")
             
         };
@@ -68,15 +61,15 @@ const Feed = ({user}) =>  {
       }
       const handleSortClick=()=>{
         const copy = [...book]
-        if (Sort=="price") {
+        if (Sort==="price") {
           copy.sort(function(a,b){ return a.price - b.price})
           setBook(copy)
         }
-        if (Sort=="price_reverse") {
+        if (Sort==="price_reverse") {
           copy.sort(function(a,b){ return b.price - a.price})
           setBook(copy)
         }
-        if (Sort=="name") {
+        if (Sort==="name") {
           copy.sort((a, b) => {
             let fa = a.title.toLowerCase(),
                 fb = b.title.toLowerCase();
@@ -91,7 +84,7 @@ const Feed = ({user}) =>  {
         })
           setBook(copy)
         }
-        if (Sort=="name_reverse") {
+        if (Sort==="name_reverse") {
           copy.sort((a, b) => {
             let fa = a.title.toLowerCase(),
                 fb = b.title.toLowerCase();
@@ -137,7 +130,7 @@ const Feed = ({user}) =>  {
   <Popup user={user} sucess={setSucess}/>
   </div>
   <Snackbar sx={{ height: "100%" ,alignItems:"end" ,top:-20 }} open={sucess} autoHideDuration={6000} onClose={handleClose}  >
-        <Alert sx={{ zIndex:-1}} onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+        <Alert  onClose={handleClose} severity="success" sx={{zIndex:-1 ,width: '100%' }}>
           This is a success message!
         </Alert>
       </Snackbar>
