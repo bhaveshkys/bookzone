@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import Talk from 'talkjs';
 
 export class Temp extends Component {
@@ -43,8 +42,7 @@ export class Temp extends Component {
                 const bookId=this.props.bookId
                 const oneOnOneId= Talk.oneOnOneId(me, other)
                 const id=oneOnOneId+bookId
-                console.log(id)
-                const conversationId = Talk.oneOnOneId(me, other);
+                /* const conversationId = Talk.oneOnOneId(me, other); */
             
                 const conversation = window.talkSession.getOrCreateConversation(id);
                 conversation.setAttributes({

@@ -1,14 +1,13 @@
-import { async } from "@firebase/util";
-import { db,app,auth,authProvider,storage } from "./firebase";
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where } from "firebase/firestore"
+import { db,auth,authProvider,storage } from "./firebase";
+import { addDoc, collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore"
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { ref, deleteObject } from "firebase/storage";
 export const signin =()=>{
     signInWithPopup(auth, authProvider)
   .then((result) => {
     // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
+    /* const credential = GoogleAuthProvider.credentialFromResult(result); */
+    /* const token = credential.accessToken; */
     // The signed-in user info.
     const user = result.user;
     checkNewUser(user)
@@ -19,7 +18,7 @@ export const signin =()=>{
     const errorCode = error.code;
     const errorMessage = error.message;
     // The email of the user's account used.
-    const email = error.email;
+    /* const email = error.email; */
     // The AuthCredential type that was used.
     const credential = GoogleAuthProvider.credentialFromError(error);
     console.log(errorCode,errorMessage,credential)
@@ -47,7 +46,7 @@ export const returnUserFromBook=async(user)=>{
   const myQuery=query(userCollRef,where("user_uid","==",user))
   const mySnapShot=await getDocs(myQuery)
   let result
-  if(mySnapShot.empty==false){
+  if(mySnapShot.empty===false){
     mySnapShot.forEach((doc)=>{
      result=  doc.data()
     })
@@ -56,9 +55,15 @@ export const returnUserFromBook=async(user)=>{
 }
 
 
-export const returnFilteredBooks=async(genre,lessThan,moreThan)=>{
+export const returnFilteredBooks=async(genre="all",lessThan,moreThan)=>{
   const bookCollRef=collection(db,"books")
-  const myQuery=query(bookCollRef,where("genre","==",genre))
+  let myQuery
+  if (genre=="all") {
+   myQuery=query(bookCollRef)
+  }
+  else{
+   myQuery=query(bookCollRef,where("genre","==",genre))
+  }
   const mySnapShot=await getDocs(myQuery)
   let arr=[]
   const checkMoreThan=(book)=>{
@@ -70,9 +75,8 @@ export const returnFilteredBooks=async(genre,lessThan,moreThan)=>{
   mySnapShot.forEach((doc)=>{
     arr.push(doc.data())
    })
-   console.log(arr)
    let a2= arr.filter(checkMoreThan)
-   let a3=arr.filter(checkLessThan)
+   let a3=a2.filter(checkLessThan)
    console.log(a3)
    return a3
 }
@@ -96,7 +100,6 @@ export const notReturnUserBooks=async(user=null)=>{
   const bookCollRef=collection(db,"books")
   const myQuery=query(bookCollRef,where("user","!=",user?.uid))
   const mySnapShot=await getDocs(myQuery)
-  let arr=[]
   return mySnapShot
   /* mySnapShot.forEach((doc)=>{
     arr.push({...doc.data(), id: doc.id})
