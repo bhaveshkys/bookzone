@@ -5,6 +5,7 @@ This project use firebase as database
 after generating firebase api keys and pasting the in dot env file 
 create two collections "books" and "user" in firebase
 
+#### note : firestore and firebase storage are seperate (firestore is used for database and firebase storage is used  for images)
 firebase storage is used to store images
 genrate a folder bookImage
 
