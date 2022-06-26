@@ -24,7 +24,7 @@ export class Inbox extends Component {
 
                 if (!window.talkSession) {
                     window.talkSession = new Talk.Session({
-                        appId: "tZPGyoWm",
+                        appId: process.env.REACT_APP_talkJs,
                         me: me
                     });
                 }
